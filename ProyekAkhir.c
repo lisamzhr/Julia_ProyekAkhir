@@ -1,17 +1,28 @@
 #include <stdio.h>
 
+//define variabel tetap
+#define JamKerjaPerHari 8
+#define JamPerHari 24
+#define HariPerTahun 365
+
+//tipe data tambahan
 typedef struct{
     char dataNama[30];
     int dataTahun;
     float dataListrikKwH, dataEmisiMwH, dataProduksi, dataHargaMesin;
 } KlasifikasiMesin;
 
+//enum 
 
 float KalkulasiHematEnergi(); //ini output nilainya aja
-float KalkulasiEmisiKarbon();
+float KalkulasiEmisiKarbon(); 
 float KalkulasiKeuntunganProduksi();
+//ini cari banyak produksi per rupiah, produksi dari laju kali total jam
 
 //function tambahan
+float KalkulasiOverheating(float DL, float DE, float DP, float nDL, float nDE, float nDP); //n kecil normalisasi
+int GantiMesinPerTahun(int ovrHeating, int tahun);
+
 //call by reference
 void SortMesinTerbaik(float score[], KlasifikasiMesin objek[]);
 void Swap(float* a, float* b);
@@ -42,3 +53,10 @@ int main(){
     
     //print out urutan
 }
+
+float KalkulasiOverheating(float DL, float DE, float DP, float nDL, float nDE, float nDP){
+    float Ot = 0.4 * (DP / nDP) + 0.3 * (DL / nDL) + 0.3 * (DE / nDE);
+    return Ot;
+}
+
+
