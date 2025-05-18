@@ -13,6 +13,9 @@ typedef struct{
 } KlasifikasiMesin;
 
 //enum 
+typedef enum {
+    GOOD = 5500, WARNING = 6150, DANGER = 9200, FATAL = 11050
+} StatusMesin;
 
 //function kalkulasi utama
 float KalkulasiHematEnergi(); //ini output nilainya aja
@@ -21,7 +24,7 @@ float KalkulasiKeuntunganProduksi(KlasifikasiMesin mesinSample, KlasifikasiMesin
 //ini cari banyak produksi per rupiah, produksi dari laju kali total jam
 
 //function tambahan
-int GantiMesinPerTahun(int ovrHeating, int tahun);
+int GantiMesinPerTahun(float ovrHeating, int tahun);
 //call by reference
 void SortMesinTerbaik(float score[], KlasifikasiMesin objek[]);
 void Swap(float* a, float* b);
@@ -80,8 +83,28 @@ int main(){
 
 //isi function
 //serangkaian function produksi
-int GantiMesinPerTahun(int ovrHeating, int tahun){
+int GantiMesinPerTahun(float ovrHeating, int tahun){
+    float ovhValue = ovrHeating;
     int gantiMesin = 0;
+    float statusPoin = 0;
+
+    for (int i = 0; i < tahun; i++){
+        for (int j = 0; j < HariPerTahun ; j++){
+            statusPoin += ovhValue * JamKerjaPerHari; //jadi status poin nambah sesuai kecepatan overheating
+            statusPoin -= (1 - ovhValue) * (24 - JamKerjaPerHari); // pendinginan saat jam istirahat
+            //saat mencapai FATAL, mesin diganti
+            if (statusPoin >= FATAL){
+                statusPoin = 0; //restart 
+                ovhValue = ovrHeating; //kembali ke nilai defaulft mesin
+                gantiMesin++;
+            }
+            //laju naik saat mencapai kondisi tertentu
+            else if (statusPoin >= DANGER){ovhValue *= 1.7;}
+            else if (statusPoin >= WARNING){ovhValue *= 1.15;}
+        }
+        
+    }
+    printf("%d\n", gantiMesin);
     return gantiMesin;
 }
 
