@@ -29,7 +29,7 @@ void Swap(float* a, float* b);
 int main(){
     //input berapa mesin
     int totalMesin;
-    //nanti tambah printf
+    printf("Total mesin yang ingin disimulasikan :");
     scanf("%d", &totalMesin);
     //input data tahun, listrik (kwh), emisi (mwh), produksi (item/jam), harga mesin(rupiah). bikin loop nah cari nilai terbesar setiap kategori, jadiin untuk variabel normalisasi
     KlasifikasiMesin nMesin = {0};
@@ -37,22 +37,28 @@ int main(){
 
     //nanti tambah printf
     for (int i = 0; i < totalMesin; i++){
+        printf("Nama Mesin ke-%d: ", i+1);
         scanf(" %[^\n]", mesin[i].dataNama);
+        printf("Besar listrik yang digunakan (KwH): ");
         scanf("%f", &mesin[i].dataListrikKwH);
         //cari data normanisasi
         nMesin.dataListrikKwH = (mesin[i].dataListrikKwH > nMesin.dataListrikKwH) ? mesin[i].dataListrikKwH : nMesin.dataListrikKwH;
+        printf("Total emisi karbon per jam (MwH): ");
         scanf("%f", &mesin[i].dataEmisiMwH);
         //cari data normanisasi
         nMesin.dataEmisiMwH = (mesin[i].dataEmisiMwH > nMesin.dataEmisiMwH) ? mesin[i].dataEmisiMwH : nMesin.dataEmisiMwH;
+        printf("Total mesin memproduksi per jam: ");
         scanf("%f", &mesin[i].dataProduksi); 
         //cari data normanisasi
         nMesin.dataProduksi = (mesin[i].dataProduksi > nMesin.dataProduksi) ? mesin[i].dataProduksi : nMesin.dataProduksi;
+        printf("Harga mesin (Juta): ");
         scanf("%f", &mesin[i].dataHargaMesin);
         nMesin.dataHargaMesin = (mesin[i].dataHargaMesin > nMesin.dataHargaMesin) ? mesin[i].dataHargaMesin: nMesin.dataHargaMesin;
     }
 
     //berapa tahun mesin perlu dipake
     int tahun;
+    printf("Target tahun mesin digunakan: ");
     scanf("%d", &tahun);
     
     //kalkulasi score dan simulasi tiap mesin
