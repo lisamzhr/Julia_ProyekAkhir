@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <windows.h>
 
 //define variabel tetap
 #define JamKerjaPerHari 8
@@ -29,6 +30,7 @@ int GantiMesinPerTahun(float ovrHeating, int tahun);
 void SortMesinTerbaik(float score[], KlasifikasiMesin objek[]);
 void Swap(float* a, float* b);
 
+
 int main(){
     //input berapa mesin
     int totalMesin;
@@ -57,16 +59,28 @@ int main(){
     //berapa tahun mesin perlu dipake
     int tahun;
     scanf("%d", &tahun);
-    
+
+    //cari efesiensi mesin maksimum
+    float efisiensiMaks = 0;
+    float semuaEfisiensi[totalMesin];
+
+    for (int i = 0; i < totalMesin; i++) {
+        semuaEfisiensi[i] = KalkulasiKeuntunganProduksi(mesin[i], nMesin, tahun);
+        if (semuaEfisiensi[i] > efisiensiMaks) {
+            efisiensiMaks = semuaEfisiensi[i];
+        }
+    }
+
     //kalkulasi score dan simulasi tiap mesin
     float scoreAkhir[totalMesin];
     for (int i = 0; i < totalMesin ; i++){
         //panggil fungsi hemat energi 
         float scoreHE = 30 * KalkulasiHematEnergi(/*masukin per mesin*/) / KalkulasiHematEnergi(/*parameter normalisasi*/);
         //panggil fungsi emisi karbon
-        float scoreEM = 25 * KalkulasiEmisiKarbon(/*masukin per mesin*/) / KalkulasiHematEnergi(/*parameter normalisasi*/);
+        float scoreEM = 25 * KalkulasiEmisiKarbon(/*masukin per mesin*/) / KalkulasiEmisiKarbon(/*parameter normalisasi*/);
         //panggil fungsi keuntungan
-        float scoreKU = 25 * KalkulasiKeuntunganProduksi(mesin[i], nMesin, tahun) / KalkulasiKeuntunganProduksi(nMesin, nMesin, tahun);
+        float scoreKU = 45 * (semuaEfisiensi[i] / efisiensiMaks);
+        printf(" score KU  %f \n", scoreKU);
         //score akhir efektivitas 
         scoreAkhir[i] = scoreEM + scoreHE + scoreKU;
     }
@@ -104,7 +118,7 @@ int GantiMesinPerTahun(float ovrHeating, int tahun){
         }
         
     }
-    printf("%d\n", gantiMesin);
+    printf("%d ", gantiMesin);
     return gantiMesin;
 }
 
@@ -112,11 +126,12 @@ float KalkulasiKeuntunganProduksi(KlasifikasiMesin mesinSample, KlasifikasiMesin
     //cari persamaan overHeat
     float OvhTime = 0.3 * (mesinSample.dataListrikKwH / normMesin.dataListrikKwH) + 0.3 * (mesinSample.dataEmisiMwH / normMesin.dataEmisiMwH) + 0.4 * (mesinSample.dataProduksi / normMesin.dataProduksi);
 
-    //cari berapa kali ganti mesin selama periodo tahun
-    int gantiMesin = GantiMesinPerTahun (OvhTime, tahun);
+    //cari berapa kali ganti mesin selama periode tahun
+    int gantiMesin = GantiMesinPerTahun(OvhTime, tahun);
+    float totalCost = (1 + gantiMesin) * mesinSample.dataHargaMesin;
 
-    //cuma buat error handle pas di run, krn nilai blm di assign
-    float scoreKeuntungan = 0;
+    float scoreKeuntungan = mesinSample.dataProduksi / totalCost;
+
     return scoreKeuntungan;
 }
 
