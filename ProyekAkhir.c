@@ -15,22 +15,45 @@ typedef struct{
 //enum 
 
 //function kalkulasi utama
-float KalkulasiHematEnergi(); //ini output nilainya aja
-float KalkulasiEmisiKarbon(); 
+float KalkulasiHematEnergi(KlasifikasiMesin mesin);
+float KalkulasiEmisiKarbon(KlasifikasiMesin mesin);
 float KalkulasiKeuntunganProduksi(KlasifikasiMesin mesinSample, KlasifikasiMesin normMesin, int tahun);
 //ini cari banyak produksi per rupiah, produksi dari laju kali total jam
 
 //function tambahan
 int GantiMesinPerTahun(int ovrHeating, int tahun);
 //call by reference
-void SortMesinTerbaik(float score[], KlasifikasiMesin objek[]);
-void Swap(float* a, float* b);
+
+void SwapObjek(KlasifikasiMesin* a, KlasifikasiMesin* b) {
+    KlasifikasiMesin temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void Swap(float* a, float* b) {
+    float temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void SortMesinTerbaik(float score[], KlasifikasiMesin objek[], int totalMesin) {
+    for (int i = 0; i < totalMesin - 1; i++) {
+        for (int j = 0; j < totalMesin - i - 1; j++) {
+            if (score[j] < score[j + 1]) {
+                Swap(&score[j], &score[j + 1]);
+                SwapObjek(&objek[j], &objek[j + 1]);
+            }
+        }
+    }
+}
+
 
 int main(){
     //input berapa mesin
     int totalMesin;
     printf("Total mesin yang ingin disimulasikan :");
     scanf("%d", &totalMesin);
+    
     //input data tahun, listrik (kwh), emisi (mwh), produksi (item/jam), harga mesin(rupiah). bikin loop nah cari nilai terbesar setiap kategori, jadiin untuk variabel normalisasi
     KlasifikasiMesin nMesin = {0};
     KlasifikasiMesin *mesin = malloc(totalMesin * sizeof(KlasifikasiMesin));
@@ -65,9 +88,9 @@ int main(){
     float scoreAkhir[totalMesin];
     for (int i = 0; i < totalMesin ; i++){
         //panggil fungsi hemat energi 
-        float scoreHE = 30 * KalkulasiHematEnergi(/*masukin per mesin*/) / KalkulasiHematEnergi(/*parameter normalisasi*/);
+		float scoreHE = 30 * KalkulasiHematEnergi(mesin[i]) / KalkulasiHematEnergi(nMesin);
         //panggil fungsi emisi karbon
-        float scoreEM = 25 * KalkulasiEmisiKarbon(/*masukin per mesin*/) / KalkulasiHematEnergi(/*parameter normalisasi*/);
+ 		float scoreEM = 25 * KalkulasiEmisiKarbon(mesin[i]) / KalkulasiEmisiKarbon(nMesin);
         //panggil fungsi keuntungan
         float scoreKU = 25 * KalkulasiKeuntunganProduksi(mesin[i], nMesin, tahun) / KalkulasiKeuntunganProduksi(nMesin, nMesin, tahun);
         //score akhir efektivitas 
@@ -75,7 +98,7 @@ int main(){
     }
     
     //urutin mesin yang paling efektif
-    SortMesinTerbaik(scoreAkhir, mesin);
+	SortMesinTerbaik(scoreAkhir, mesin, totalMesin);
     
     //print out urutan
 
@@ -103,15 +126,14 @@ float KalkulasiKeuntunganProduksi(KlasifikasiMesin mesinSample, KlasifikasiMesin
     return scoreKeuntungan;
 }
 
-float KalkulasiHematEnergi(){
+float KalkulasiHematEnergi(KlasifikasiMesin mesin){
 
 }
 
-float KalkulasiEmisiKarbon(){
+float KalkulasiEmisiKarbon(KlasifikasiMesin mesin){
 
 }
 
-void SortMesinTerbaik(float score[], KlasifikasiMesin objek[]){
 
-}
+
 
