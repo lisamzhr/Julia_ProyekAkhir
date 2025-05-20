@@ -15,3 +15,6 @@ OKEE, biar ga pusing kalo mau trial pake spesifikasi mesin ini aja, status mesin
 ## commit kedua - cipa
 memberikan penjeladan input pada program dengan mendefinisikan tentang program apa yang akan diinput
 
+## commit ketiga - ariq
+membuat function Swap, SortMesinTerbaik, dan menambahkan fungsi SwapObjek
+- fungsi swap dan 
