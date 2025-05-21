@@ -27,3 +27,7 @@ membuat function Swap, SortMesinTerbaik, dan menambahkan fungsi SwapObjek
 
 ## commit kelima - cipa
 UI input done
+
+## commit 6 - lisa
+merge semua branch, cek error pada program, suka coba debbug variavel, hasilnya semua fungsi berjalan dengan baik. 
+hal yang kurang dari kode UI untuk output, tes efesiensi dan ketepatan parameter tiap fungsi

@@ -27,29 +27,9 @@ float KalkulasiKeuntunganProduksi(KlasifikasiMesin mesinSample, KlasifikasiMesin
 //function tambahan
 int GantiMesinPerTahun(float ovrHeating, int tahun);
 //call by reference
-
-void SwapObjek(KlasifikasiMesin* a, KlasifikasiMesin* b) {
-    KlasifikasiMesin temp = *a;
-    *a = *b;
-    *b = temp;
-}
-
-void Swap(float* a, float* b) {
-    float temp = *a;
-    *a = *b;
-    *b = temp;
-}
-
-void SortMesinTerbaik(float score[], KlasifikasiMesin objek[], int totalMesin) {
-    for (int i = 0; i < totalMesin - 1; i++) {
-        for (int j = 0; j < totalMesin - i - 1; j++) {
-            if (score[j] < score[j + 1]) {
-                Swap(&score[j], &score[j + 1]);
-                SwapObjek(&objek[j], &objek[j + 1]);
-            }
-        }
-    }
-}
+void SwapObjek(KlasifikasiMesin* a, KlasifikasiMesin* b);
+void Swap(float* a, float* b);
+void SortMesinTerbaik(float score[], KlasifikasiMesin objek[], int totalMesin);
 
 //Fungsi User Interface input
 void welcome();
@@ -120,10 +100,9 @@ int main(){
         //panggil fungsi hemat energi 
         float scoreHE = 30 * KalkulasiHematEnergi(mesin[i], nMesin);
         //panggil fungsi emisi karbon
-        float scoreEM = 25 * KalkulasiEmisiKarbon(/*masukin per mesin*/) / KalkulasiEmisiKarbon(/*parameter normalisasi*/);
+        float scoreEM = 25 * KalkulasiEmisiKarbon(mesin[i], nMesin);
         //panggil fungsi keuntungan
         float scoreKU = 45 * (semuaEfisiensi[i] / efisiensiMaks);
-        printf(" score KU  %f \n", scoreKU);
         //score akhir efektivitas 
         scoreAkhir[i] = scoreEM + scoreHE + scoreKU;
     }
@@ -161,7 +140,6 @@ int GantiMesinPerTahun(float ovrHeating, int tahun){
         }
         
     }
-    printf("%d ", gantiMesin);
     return gantiMesin;
 }
 
@@ -201,6 +179,31 @@ float KalkulasiEmisiKarbon(KlasifikasiMesin mesinSample, KlasifikasiMesin normMe
 	}
 }
 
+//sort score mesin
+void SwapObjek(KlasifikasiMesin* a, KlasifikasiMesin* b) {
+    KlasifikasiMesin temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void Swap(float* a, float* b) {
+    float temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void SortMesinTerbaik(float score[], KlasifikasiMesin objek[], int totalMesin) {
+    for (int i = 0; i < totalMesin - 1; i++) {
+        for (int j = 0; j < totalMesin - i - 1; j++) {
+            if (score[j] < score[j + 1]) {
+                Swap(&score[j], &score[j + 1]);
+                SwapObjek(&objek[j], &objek[j + 1]);
+            }
+        }
+    }
+}
+
+//UI inout
 void welcome()
 {
     int i; // deklarasi variabel integer
