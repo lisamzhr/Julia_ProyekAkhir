@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <windows.h>
+
 
 //define variabel tetap
 #define JamKerjaPerHari 8
@@ -26,10 +28,17 @@ int GantiMesinPerTahun(int ovrHeating, int tahun);
 void SortMesinTerbaik(float score[], KlasifikasiMesin objek[]);
 void Swap(float* a, float* b);
 
+//Fungsi User Interface input
+void welcome();
+
 int main(){
+    welcome();
+
     //input berapa mesin
+    printf("\n\n\n\n\n\n\n");
+    printf("\t\t\t\t\t\t\t\t================== Mulai Simulasi ===================\n");
     int totalMesin;
-    //nanti tambah printf
+    printf("\t\t\t\t\t\t\t\tTotal mesin yang ingin disimulasikan :");
     scanf("%d", &totalMesin);
     //input data tahun, listrik (kwh), emisi (mwh), produksi (item/jam), harga mesin(rupiah). bikin loop nah cari nilai terbesar setiap kategori, jadiin untuk variabel normalisasi
     KlasifikasiMesin nMesin = {0};
@@ -37,22 +46,36 @@ int main(){
 
     //nanti tambah printf
     for (int i = 0; i < totalMesin; i++){
+        printf("\n\t\t\t\t\t\t\t\tData Mesin ke-%d ", i+1);
+        printf("\n\t\t\t\t\t\t\t\tNama Mesin ke-%d: ", i+1);
+        getchar();//membersihkan newline sisa input sebelumnya
         scanf(" %[^\n]", mesin[i].dataNama);
+
+        printf("\t\t\t\t\t\t\t\tBesar listrik yang digunakan (KwH): ");
         scanf("%f", &mesin[i].dataListrikKwH);
         //cari data normanisasi
         nMesin.dataListrikKwH = (mesin[i].dataListrikKwH > nMesin.dataListrikKwH) ? mesin[i].dataListrikKwH : nMesin.dataListrikKwH;
+
+        printf("\t\t\t\t\t\t\t\tTotal emisi karbon per jam (MwH): ");
         scanf("%f", &mesin[i].dataEmisiMwH);
         //cari data normanisasi
         nMesin.dataEmisiMwH = (mesin[i].dataEmisiMwH > nMesin.dataEmisiMwH) ? mesin[i].dataEmisiMwH : nMesin.dataEmisiMwH;
+
+        printf("\t\t\t\t\t\t\t\tTotal mesin memproduksi per jam (Kg): ");
         scanf("%f", &mesin[i].dataProduksi); 
         //cari data normanisasi
         nMesin.dataProduksi = (mesin[i].dataProduksi > nMesin.dataProduksi) ? mesin[i].dataProduksi : nMesin.dataProduksi;
+
+        printf("\t\t\t\t\t\t\t\tHarga mesin (Juta): ");
         scanf("%f", &mesin[i].dataHargaMesin);
         nMesin.dataHargaMesin = (mesin[i].dataHargaMesin > nMesin.dataHargaMesin) ? mesin[i].dataHargaMesin: nMesin.dataHargaMesin;
+
+        printf("\n");
     }
 
     //berapa tahun mesin perlu dipake
     int tahun;
+    printf("\t\t\t\t\t\t\t\tTarget tahun mesin digunakan: ");
     scanf("%d", &tahun);
     
     //kalkulasi score dan simulasi tiap mesin
@@ -107,5 +130,39 @@ float KalkulasiEmisiKarbon(){
 
 void SortMesinTerbaik(float score[], KlasifikasiMesin objek[]){
 
+}
+
+void welcome()
+{
+    int i; // deklarasi variabel integer
+    printf("!--- Harap Fullscreen lalu tekan ENTER untuk memulai aplikasi ---!");
+    getchar();     // memanggil function getchar
+    system("CLS"); // Membersihkan layar
+    Sleep(800);    // menjeda program selama 0.8 detik
+    system("color B0");
+    printf("\n\n\n\n\n\n\n");
+    char a[] = {"\t\t\t\t\t\t\t\t=====================================\n"
+                "\t\t\t\t\t\t\t\t|---- Selamat Datang Di Aplikasi ---|\n"
+                "\t\t\t\t\t\t\t\t| Machine for sustainable production|\n"
+                "\t\t\t\t\t\t\t\t|---------- Kelompok Julia ---------|\n"
+                "\t\t\t\t\t\t\t\t|------- Pemrograman Dasar 01 ------|\n"
+                "\t\t\t\t\t\t\t\t=====================================\n\n"};
+    for (i = 0; a[i] != a[283]; i++)
+    {
+        printf("%c", a[i]);
+        Sleep(5);
+    }
+    printf("\t\t\t\t\t\t\t\t\t\tLoading... \n\n");
+    Beep(659, 400);
+    Sleep(1000); // menjeda program selama 1 detik
+    for (i = 1; i <= 172; i++)
+    {
+        printf("%c", 223); // 233 adalah kode KARAKTER beta di dalam ASCII2
+        if (i == 60 || i == 100)
+            Sleep(500); // menjeda program selama 0.5 detik
+        Sleep(12);
+    }
+    Sleep(1600);   // menjeda program selama 1.6 detik
+    system("CLS"); // Membersihkan layar
 }
 
