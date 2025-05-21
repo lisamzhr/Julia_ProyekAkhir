@@ -38,6 +38,7 @@ int main(){
     printf("\n\n\n\n\n\n\n");
     printf("\t\t\t\t\t\t\t\t================== Mulai Simulasi ===================\n");
     int totalMesin;
+    
     printf("\t\t\t\t\t\t\t\tTotal mesin yang ingin disimulasikan :");
     scanf("%d", &totalMesin);
     //input data tahun, listrik (kwh), emisi (mwh), produksi (item/jam), harga mesin(rupiah). bikin loop nah cari nilai terbesar setiap kategori, jadiin untuk variabel normalisasi
