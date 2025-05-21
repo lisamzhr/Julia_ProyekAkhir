@@ -24,3 +24,6 @@ membuat function Swap, SortMesinTerbaik, dan menambahkan fungsi SwapObjek
 - membuat function kalkulasi emisi karbon
 - memanggil hasil dari function hemat energi untuk menghitung skor akhir HE
 - memanggil hasil dari function emisi karbon untuk menghitung skor akhir EM
+
+## commit kelima - cipa
+UI input done
