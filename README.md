@@ -17,4 +17,10 @@ memberikan penjeladan input pada program dengan mendefinisikan tentang program a
 
 ## commit ketiga - ariq
 membuat function Swap, SortMesinTerbaik, dan menambahkan fungsi SwapObjek
-- fungsi swap dan 
+- fungsi swap dan
+
+## commit keempat -putriayu
+- membuat function kalkulasi hemat energi
+- membuat function kalkulasi emisi karbon
+- memanggil hasil dari function hemat energi untuk menghitung skor akhir HE
+- memanggil hasil dari function emisi karbon untuk menghitung skor akhir EM
