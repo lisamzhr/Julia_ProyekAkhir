@@ -12,3 +12,18 @@ OKEE, biar ga pusing kalo mau trial pake spesifikasi mesin ini aja, status mesin
 | **JSW J550AD (550 Ton)** | ±21,4 kWh        | ±7,8 kg        | ±185 kg plastik/jam   | ±Rp2,9 M            | Produksi sangat tinggi   |
 | **Haitian MA1600/540**   | ±17 kWh          | ±6,2 kg        | ±100 kg plastik/jam   | ±Rp550 – Rp790 Jt   | Harga paling terjangkau |
 
+## commit kedua - cipa
+memberikan penjeladan input pada program dengan mendefinisikan tentang program apa yang akan diinput
+
+## commit ketiga - ariq
+membuat function Swap, SortMesinTerbaik, dan menambahkan fungsi SwapObjek
+- fungsi swap dan
+
+## commit keempat -putriayu
+- membuat function kalkulasi hemat energi
+- membuat function kalkulasi emisi karbon
+- memanggil hasil dari function hemat energi untuk menghitung skor akhir HE
+- memanggil hasil dari function emisi karbon untuk menghitung skor akhir EM
+
+## commit kelima - cipa
+UI input done
