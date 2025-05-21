@@ -27,8 +27,29 @@ float KalkulasiKeuntunganProduksi(KlasifikasiMesin mesinSample, KlasifikasiMesin
 //function tambahan
 int GantiMesinPerTahun(float ovrHeating, int tahun);
 //call by reference
-void SortMesinTerbaik(float score[], KlasifikasiMesin objek[]);
-void Swap(float* a, float* b);
+
+void SwapObjek(KlasifikasiMesin* a, KlasifikasiMesin* b) {
+    KlasifikasiMesin temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void Swap(float* a, float* b) {
+    float temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void SortMesinTerbaik(float score[], KlasifikasiMesin objek[], int totalMesin) {
+    for (int i = 0; i < totalMesin - 1; i++) {
+        for (int j = 0; j < totalMesin - i - 1; j++) {
+            if (score[j] < score[j + 1]) {
+                Swap(&score[j], &score[j + 1]);
+                SwapObjek(&objek[j], &objek[j + 1]);
+            }
+        }
+    }
+}
 
 //Fungsi User Interface input
 void welcome();
@@ -43,6 +64,7 @@ int main(){
     
     printf("\t\t\t\t\t\t\t\tTotal mesin yang ingin disimulasikan :");
     scanf("%d", &totalMesin);
+    
     //input data tahun, listrik (kwh), emisi (mwh), produksi (item/jam), harga mesin(rupiah). bikin loop nah cari nilai terbesar setiap kategori, jadiin untuk variabel normalisasi
     KlasifikasiMesin nMesin = {0};
     KlasifikasiMesin *mesin = malloc(totalMesin * sizeof(KlasifikasiMesin));
@@ -107,7 +129,7 @@ int main(){
     }
     
     //urutin mesin yang paling efektif
-    SortMesinTerbaik(scoreAkhir, mesin);
+	SortMesinTerbaik(scoreAkhir, mesin, totalMesin);
     
     //print out urutan
 
@@ -177,11 +199,6 @@ float KalkulasiEmisiKarbon(KlasifikasiMesin mesinSample, KlasifikasiMesin normMe
 		kalkuEM = mesinSample.dataEmisiMwH / normMesin.dataEmisiMwH;
 		return kalkuEM;
 	}
-
-}
-
-void SortMesinTerbaik(float score[], KlasifikasiMesin objek[]){
-
 }
 
 void welcome()
