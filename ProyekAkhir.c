@@ -15,8 +15,8 @@ typedef struct{
 //enum 
 
 //function kalkulasi utama
-float KalkulasiHematEnergi(); //ini output nilainya aja
-float KalkulasiEmisiKarbon(); 
+float KalkulasiHematEnergi(KlasifikasiMesin mesinSample, KlasifikasiMesin normMesin); //ini output nilainya aja
+float KalkulasiEmisiKarbon(KlasifikasiMesin mesinSample, KlasifikasiMesin normMesin); 
 float KalkulasiKeuntunganProduksi(KlasifikasiMesin mesinSample, KlasifikasiMesin normMesin, int tahun);
 //ini cari banyak produksi per rupiah, produksi dari laju kali total jam
 
@@ -59,11 +59,11 @@ int main(){
     float scoreAkhir[totalMesin];
     for (int i = 0; i < totalMesin ; i++){
         //panggil fungsi hemat energi 
-        float scoreHE = 30 * KalkulasiHematEnergi(/*masukin per mesin*/) / KalkulasiHematEnergi(/*parameter normalisasi*/);
+        float scoreHE = 30 * KalkulasiHematEnergi(mesin[i], nMesin);
         //panggil fungsi emisi karbon
-        float scoreEM = 25 * KalkulasiEmisiKarbon(/*masukin per mesin*/) / KalkulasiHematEnergi(/*parameter normalisasi*/);
+        float scoreEM = 25 * KalkulasiEmisiKarbon(mesin[i], nMesin);
         //panggil fungsi keuntungan
-        float scoreKU = 25 * KalkulasiKeuntunganProduksi(mesin[i], nMesin, tahun) / KalkulasiKeuntunganProduksi(nMesin, nMesin, tahun);
+        float scoreKU = 45 * KalkulasiKeuntunganProduksi(mesin[i], nMesin, tahun) / KalkulasiKeuntunganProduksi(nMesin, nMesin, tahun);
         //score akhir efektivitas 
         scoreAkhir[i] = scoreEM + scoreHE + scoreKU;
     }
@@ -97,11 +97,27 @@ float KalkulasiKeuntunganProduksi(KlasifikasiMesin mesinSample, KlasifikasiMesin
     return scoreKeuntungan;
 }
 
-float KalkulasiHematEnergi(){
+float KalkulasiHematEnergi(KlasifikasiMesin mesinSample, KlasifikasiMesin normMesin){
+	// semakin kecil listrik yang digunakan, maka akan semakin hemat
+	if (mesinSample.dataListrikKwH <= 0 || normMesin.dataListrikKwH <= 0){
+		return 0;
+	}else {
+		float kalkuHE;
+		kalkuHE =  mesinSample.dataListrikKwH / normMesin.dataListrikKwH; 
+		return kalkuHE;
+	}
 
 }
 
-float KalkulasiEmisiKarbon(){
+float KalkulasiEmisiKarbon(KlasifikasiMesin mesinSample, KlasifikasiMesin normMesin){
+	// semakin kecil emisi yang dihasilkan  maka akan semakin ramah lingkungan
+	if (mesinSample.dataEmisiMwH <= 0 || normMesin.dataEmisiMwH <+ 0){
+		return 0;
+	}else {
+		float kalkuEM;
+		kalkuEM = mesinSample.dataEmisiMwH / normMesin.dataEmisiMwH;
+		return kalkuEM;
+	}
 
 }
 
