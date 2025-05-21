@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <windows.h>
 
-
 //define variabel tetap
 #define JamKerjaPerHari 8
 #define JamPerHari 24
@@ -15,6 +14,9 @@ typedef struct{
 } KlasifikasiMesin;
 
 //enum 
+typedef enum {
+    GOOD = 5500, WARNING = 6150, DANGER = 9200, FATAL = 11050
+} StatusMesin;
 
 //function kalkulasi utama
 float KalkulasiHematEnergi(KlasifikasiMesin mesinSample, KlasifikasiMesin normMesin); //ini output nilainya aja
@@ -23,7 +25,7 @@ float KalkulasiKeuntunganProduksi(KlasifikasiMesin mesinSample, KlasifikasiMesin
 //ini cari banyak produksi per rupiah, produksi dari laju kali total jam
 
 //function tambahan
-int GantiMesinPerTahun(int ovrHeating, int tahun);
+int GantiMesinPerTahun(float ovrHeating, int tahun);
 //call by reference
 void SortMesinTerbaik(float score[], KlasifikasiMesin objek[]);
 void Swap(float* a, float* b);
@@ -78,16 +80,28 @@ int main(){
     int tahun;
     printf("\t\t\t\t\t\t\t\tTarget tahun mesin digunakan: ");
     scanf("%d", &tahun);
-    
+
+    //cari efesiensi mesin maksimum
+    float efisiensiMaks = 0;
+    float semuaEfisiensi[totalMesin];
+
+    for (int i = 0; i < totalMesin; i++) {
+        semuaEfisiensi[i] = KalkulasiKeuntunganProduksi(mesin[i], nMesin, tahun);
+        if (semuaEfisiensi[i] > efisiensiMaks) {
+            efisiensiMaks = semuaEfisiensi[i];
+        }
+    }
+
     //kalkulasi score dan simulasi tiap mesin
     float scoreAkhir[totalMesin];
     for (int i = 0; i < totalMesin ; i++){
         //panggil fungsi hemat energi 
         float scoreHE = 30 * KalkulasiHematEnergi(mesin[i], nMesin);
         //panggil fungsi emisi karbon
-        float scoreEM = 25 * KalkulasiEmisiKarbon(mesin[i], nMesin);
+        float scoreEM = 25 * KalkulasiEmisiKarbon(/*masukin per mesin*/) / KalkulasiEmisiKarbon(/*parameter normalisasi*/);
         //panggil fungsi keuntungan
-        float scoreKU = 45 * KalkulasiKeuntunganProduksi(mesin[i], nMesin, tahun) / KalkulasiKeuntunganProduksi(nMesin, nMesin, tahun);
+        float scoreKU = 45 * (semuaEfisiensi[i] / efisiensiMaks);
+        printf(" score KU  %f \n", scoreKU);
         //score akhir efektivitas 
         scoreAkhir[i] = scoreEM + scoreHE + scoreKU;
     }
@@ -104,8 +118,28 @@ int main(){
 
 //isi function
 //serangkaian function produksi
-int GantiMesinPerTahun(int ovrHeating, int tahun){
+int GantiMesinPerTahun(float ovrHeating, int tahun){
+    float ovhValue = ovrHeating;
     int gantiMesin = 0;
+    float statusPoin = 0;
+
+    for (int i = 0; i < tahun; i++){
+        for (int j = 0; j < HariPerTahun ; j++){
+            statusPoin += ovhValue * JamKerjaPerHari; //jadi status poin nambah sesuai kecepatan overheating
+            statusPoin -= (1 - ovhValue) * (24 - JamKerjaPerHari); // pendinginan saat jam istirahat
+            //saat mencapai FATAL, mesin diganti
+            if (statusPoin >= FATAL){
+                statusPoin = 0; //restart 
+                ovhValue = ovrHeating; //kembali ke nilai defaulft mesin
+                gantiMesin++;
+            }
+            //laju naik saat mencapai kondisi tertentu
+            else if (statusPoin >= DANGER){ovhValue *= 1.7;}
+            else if (statusPoin >= WARNING){ovhValue *= 1.15;}
+        }
+        
+    }
+    printf("%d ", gantiMesin);
     return gantiMesin;
 }
 
@@ -113,11 +147,12 @@ float KalkulasiKeuntunganProduksi(KlasifikasiMesin mesinSample, KlasifikasiMesin
     //cari persamaan overHeat
     float OvhTime = 0.3 * (mesinSample.dataListrikKwH / normMesin.dataListrikKwH) + 0.3 * (mesinSample.dataEmisiMwH / normMesin.dataEmisiMwH) + 0.4 * (mesinSample.dataProduksi / normMesin.dataProduksi);
 
-    //cari berapa kali ganti mesin selama periodo tahun
-    int gantiMesin = GantiMesinPerTahun (OvhTime, tahun);
+    //cari berapa kali ganti mesin selama periode tahun
+    int gantiMesin = GantiMesinPerTahun(OvhTime, tahun);
+    float totalCost = (1 + gantiMesin) * mesinSample.dataHargaMesin;
 
-    //cuma buat error handle pas di run, krn nilai blm di assign
-    float scoreKeuntungan = 0;
+    float scoreKeuntungan = mesinSample.dataProduksi / totalCost;
+
     return scoreKeuntungan;
 }
 
