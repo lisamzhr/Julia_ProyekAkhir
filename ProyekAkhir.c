@@ -30,28 +30,12 @@ int GantiMesinPerTahun(float ovrHeating, int tahun);
 void SwapObjek(KlasifikasiMesin* a, KlasifikasiMesin* b);
 void Swap(float* a, float* b);
 void SortMesinTerbaik(float score[], KlasifikasiMesin objek[], int totalMesin);
+void FrekuensiGantiMesin (KlasifikasiMesin* mesin, int totalMesin, KlasifikasiMesin normMesin);
+void hitungBEP(KlasifikasiMesin mesin);
 
 //Fungsi User Interface input
 void welcome();
-void printDataMesin(KlasifikasiMesin *mesin, float score[], int totalMesin) {
-    printf("=============================================================================================================================\n");
-    printf("| No | Nama Mesin                 | Listrik (kWh) | Emisi (MWh) | Produksi (item/jam) | Harga Mesin (Juta) | Skor Akhir     |\n");
-    printf("=============================================================================================================================\n");
-
-    for (int i = 0; i < totalMesin; i++) {
-        printf("| %-2d | %-25s | %-13.2f | %-11.2f | %-19.2f | %-17.2f | %-14.4f |\n",
-               i + 1,
-               mesin[i].dataNama,
-               mesin[i].dataListrikKwH,
-               mesin[i].dataEmisiMwH,
-               mesin[i].dataProduksi,
-               mesin[i].dataHargaMesin,
-               score[i]);
-    }
-
-    printf("===========================================================================================================================\n");
-}
-
+void printDataMesin(KlasifikasiMesin *mesin, float score[], int totalMesin);
 
 int main(){
     welcome();
@@ -187,6 +171,41 @@ int main(){
 
 
     } while (lanjutInput == 'Y' || lanjutInput == 'y'); 
+
+    // menawarkan fitur tambahan pada user
+    int fiturTambahan;
+    printf("\nApakah Anda ingin menggunakan fitur tambahan?\n");
+    printf("0 = Tidak\n1 = Ganti Mesin\n2 = Break Even Point (BEP)\n3 = Keduanya\nPilihan Anda: ");
+    scanf("%d", &fiturTambahan);
+    
+    // Jalankan fitur sesuai pilihan user
+    switch (fiturTambahan) {
+        case 0:
+            printf("Tidak menggunakan fitur tambahan.\n");
+            break;
+        case 1:
+            // Panggil fungsi frekuensi ganti mesin
+            FrekuensiGantiMesin(mesin, totalMesin, nMesin);
+            break;
+        case 2:
+            // Panggil fungsi BEP untuk tiap mesin
+            for (int i = 0; i < totalMesin; i++) {
+                printf("\nMesin: %s\n", mesin[i].dataNama);
+                hitungBEP(mesin[i]);
+            }
+            break;
+        case 3:
+            // Jalankan kedua fitur
+            FrekuensiGantiMesin(mesin, totalMesin, nMesin);
+            for (int i = 0; i < totalMesin; i++) {
+                printf("\nMesin: %s\n", mesin[i].dataNama);
+                hitungBEP(mesin[i]);
+            }
+            break;
+        default:
+            printf("Pilihan tidak valid.\n");
+            break;
+    }
     
     //end
     free(mesin);
@@ -278,6 +297,83 @@ void SortMesinTerbaik(float score[], KlasifikasiMesin objek[], int totalMesin) {
             }
         }
     }
+}
+
+void printDataMesin(KlasifikasiMesin *mesin, float score[], int totalMesin) {
+    printf("=============================================================================================================================\n");
+    printf("| No | Nama Mesin                 | Listrik (kWh) | Emisi (MWh) | Produksi (item/jam) | Harga Mesin (Juta) | Skor Akhir     |\n");
+    printf("=============================================================================================================================\n");
+
+    for (int i = 0; i < totalMesin; i++) {
+        printf("| %-2d | %-25s | %-13.2f | %-11.2f | %-19.2f | %-17.2f | %-14.4f |\n",
+               i + 1,
+               mesin[i].dataNama,
+               mesin[i].dataListrikKwH,
+               mesin[i].dataEmisiMwH,
+               mesin[i].dataProduksi,
+               mesin[i].dataHargaMesin,
+               score[i]);
+    }
+
+    printf("===========================================================================================================================\n");
+}
+
+// fungsi untuk mengecek berapa kali ganti mesin dalam x tahun
+void FrekuensiGantiMesin (KlasifikasiMesin* mesin, int totalMesin, KlasifikasiMesin normMesin){
+    int tahun;
+    printf("\n\n================= CEK FREKUENSI PENGGANTIAN MESIN =================\n");
+    printf("Masukkan berapa tahun mesin akan digunakan untuk analisis pergantian: ");
+    scanf("%d",  &tahun);
+    printf("-------------------------------------------------------------------\n");
+    for (int i = 0; i < totalMesin; i++){
+        float OvhTime = 0.3 * (mesin[i].dataListrikKwH / normMesin.dataListrikKwH) + 0.3 * (mesin[i].dataEmisiMwH / normMesin.dataEmisiMwH) + 0.4 * (mesin[i].dataProduksi / normMesin.dataProduksi);
+        
+        int totalGanti = GantiMesinPerTahun(OvhTime, tahun);
+         printf("Mesin %-25s perlu diganti sebanyak: %d kali dalam %d tahun\n", mesin[i].dataNama, totalGanti, tahun);
+    }
+    printf("===================================================================\n\n");
+}
+
+// fungsi untuk menganalisis break even point
+void hitungBEP(KlasifikasiMesin mesin) {
+    double hargaJual, biayaListrik;
+
+    printf("=== HITUNG BREAK EVEN POINT (BEP) ===\n");
+    printf("Masukkan harga jual per item (dalam Rupiah): ");
+    scanf("%lf", &hargaJual);
+
+    printf("Masukkan biaya listrik per kWh (dalam Rupiah): ");
+    scanf("%lf", &biayaListrik);
+
+    // Konversi biaya awal dari juta ke rupiah
+    double biayaAwalRupiah = mesin.dataHargaMesin * 1000000;
+
+    // Hitung biaya listrik per item berdasarkan efisiensi energi
+    double biayaListrikPerItem = (mesin.dataListrikKwH / mesin.dataProduksi) * biayaListrik;
+
+    // Hitung laba bersih per item
+    double labaPerItem = hargaJual - biayaListrikPerItem;
+
+    // Hitung total laba per tahun
+    double kapasitasProduksiPerTahun = mesin.dataProduksi * JamKerjaPerHari * HariPerTahun;
+    double labaPerTahun = labaPerItem * kapasitasProduksiPerTahun;
+
+    // Hitung tahun BEP
+    double totalLaba = 0;
+    int tahun = 0;
+
+    if (labaPerTahun <= 0) {
+        printf("Tidak dapat menghitung BEP karena laba per tahun <= 0.\n");
+    } else {
+        while (totalLaba < biayaAwalRupiah) {
+            tahun++;
+            totalLaba += labaPerTahun;
+        }
+
+        printf("BEP tercapai dalam %d tahun.\n", tahun);
+    }
+
+    printf("======================================\n\n");
 }
 
 //UI inout
