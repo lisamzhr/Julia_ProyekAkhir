@@ -33,6 +33,25 @@ void SortMesinTerbaik(float score[], KlasifikasiMesin objek[], int totalMesin);
 
 //Fungsi User Interface input
 void welcome();
+void printDataMesin(KlasifikasiMesin *mesin, float score[], int totalMesin) {
+    printf("=============================================================================================================================\n");
+    printf("| No | Nama Mesin                 | Listrik (kWh) | Emisi (MWh) | Produksi (item/jam) | Harga Mesin (Juta) | Skor Akhir     |\n");
+    printf("=============================================================================================================================\n");
+
+    for (int i = 0; i < totalMesin; i++) {
+        printf("| %-2d | %-25s | %-13.2f | %-11.2f | %-19.2f | %-17.2f | %-14.4f |\n",
+               i + 1,
+               mesin[i].dataNama,
+               mesin[i].dataListrikKwH,
+               mesin[i].dataEmisiMwH,
+               mesin[i].dataProduksi,
+               mesin[i].dataHargaMesin,
+               score[i]);
+    }
+
+    printf("===========================================================================================================================\n");
+}
+
 
 int main(){
     welcome();
@@ -47,35 +66,51 @@ int main(){
     
     //input data tahun, listrik (kwh), emisi (mwh), produksi (item/jam), harga mesin(rupiah). bikin loop nah cari nilai terbesar setiap kategori, jadiin untuk variabel normalisasi
     KlasifikasiMesin nMesin = {0};
+    KlasifikasiMesin nMesinProduksi = {0};
     KlasifikasiMesin *mesin = malloc(totalMesin * sizeof(KlasifikasiMesin));
 
-    //nanti tambah printf
+    //bikinin error handling per input
     for (int i = 0; i < totalMesin; i++){
         printf("\n\t\t\t\t\t\t\t\tData Mesin ke-%d ", i+1);
         printf("\n\t\t\t\t\t\t\t\tNama Mesin ke-%d: ", i+1);
         getchar();//membersihkan newline sisa input sebelumnya
         scanf(" %[^\n]", mesin[i].dataNama);
 
-        printf("\t\t\t\t\t\t\t\tBesar listrik yang digunakan (KwH): ");
-        scanf("%f", &mesin[i].dataListrikKwH);
+        //contoh error handling
+        int inpStatus;
+        do
+        {
+            printf("\t\t\t\t\t\t\t\tBesar listrik yang digunakan (KwH): ");
+            inpStatus = scanf("%f", &mesin[i].dataListrikKwH);
+            if (inpStatus != 1){
+                /* bikinin printf input gavalid */
+                while (getchar() != '\n');}
+            
+        } while (inpStatus != 1);
+        
         //cari data normanisasi
         nMesin.dataListrikKwH = (mesin[i].dataListrikKwH > nMesin.dataListrikKwH) ? mesin[i].dataListrikKwH : nMesin.dataListrikKwH;
+        nMesinProduksi.dataListrikKwH = (mesin[i].dataListrikKwH < nMesinProduksi.dataListrikKwH) ? mesin[i].dataListrikKwH : nMesinProduksi.dataListrikKwH;
 
         printf("\t\t\t\t\t\t\t\tTotal emisi karbon per jam (MwH): ");
         scanf("%f", &mesin[i].dataEmisiMwH);
         //cari data normanisasi
         nMesin.dataEmisiMwH = (mesin[i].dataEmisiMwH > nMesin.dataEmisiMwH) ? mesin[i].dataEmisiMwH : nMesin.dataEmisiMwH;
+        nMesinProduksi.dataEmisiMwH = (mesin[i].dataEmisiMwH < nMesinProduksi.dataEmisiMwH) ? mesin[i].dataEmisiMwH : nMesinProduksi.dataEmisiMwH;
 
         printf("\t\t\t\t\t\t\t\tTotal mesin memproduksi per jam (Kg): ");
         scanf("%f", &mesin[i].dataProduksi); 
         //cari data normanisasi
         nMesin.dataProduksi = (mesin[i].dataProduksi > nMesin.dataProduksi) ? mesin[i].dataProduksi : nMesin.dataProduksi;
+        nMesinProduksi.dataProduksi = (mesin[i].dataProduksi > nMesinProduksi.dataProduksi) ? mesin[i].dataProduksi : nMesinProduksi.dataProduksi;
 
         printf("\t\t\t\t\t\t\t\tHarga mesin (Juta): ");
         scanf("%f", &mesin[i].dataHargaMesin);
         nMesin.dataHargaMesin = (mesin[i].dataHargaMesin > nMesin.dataHargaMesin) ? mesin[i].dataHargaMesin: nMesin.dataHargaMesin;
+        nMesinProduksi.dataHargaMesin = (mesin[i].dataHargaMesin < nMesinProduksi.dataHargaMesin) ? mesin[i].dataHargaMesin : nMesinProduksi.dataHargaMesin;
 
         printf("\n");
+        
     }
 
     //berapa tahun mesin perlu dipake
@@ -85,10 +120,12 @@ int main(){
 
     //cari efesiensi mesin maksimum
     float efisiensiMaks = 0;
-    float semuaEfisiensi[totalMesin];
+    float semuaEfisiensi[totalMesin + 1];
 
-    for (int i = 0; i < totalMesin; i++) {
-        semuaEfisiensi[i] = KalkulasiKeuntunganProduksi(mesin[i], nMesin, tahun);
+    for (int i = 0; i <= totalMesin; i++) {
+        if (i == totalMesin){
+            semuaEfisiensi[i] = KalkulasiKeuntunganProduksi(nMesinProduksi, nMesin, tahun);}
+        else{semuaEfisiensi[i] = KalkulasiKeuntunganProduksi(mesin[i], nMesin, tahun);}
         if (semuaEfisiensi[i] > efisiensiMaks) {
             efisiensiMaks = semuaEfisiensi[i];
         }
@@ -111,7 +148,8 @@ int main(){
 	SortMesinTerbaik(scoreAkhir, mesin, totalMesin);
     
     //print out urutan
-
+    system("CLS"); // Membersihkan layar
+    printDataMesin(mesin, scoreAkhir, totalMesin);
     //end
     free(mesin);
     return 0;
@@ -162,7 +200,7 @@ float KalkulasiHematEnergi(KlasifikasiMesin mesinSample, KlasifikasiMesin normMe
 		return 0;
 	}else {
 		float kalkuHE;
-		kalkuHE =  mesinSample.dataListrikKwH / normMesin.dataListrikKwH; 
+		kalkuHE = 1 - (mesinSample.dataListrikKwH / normMesin.dataListrikKwH); 
 		return kalkuHE;
 	}
 
@@ -170,11 +208,11 @@ float KalkulasiHematEnergi(KlasifikasiMesin mesinSample, KlasifikasiMesin normMe
 
 float KalkulasiEmisiKarbon(KlasifikasiMesin mesinSample, KlasifikasiMesin normMesin){
 	// semakin kecil emisi yang dihasilkan  maka akan semakin ramah lingkungan
-	if (mesinSample.dataEmisiMwH <= 0 || normMesin.dataEmisiMwH <+ 0){
+	if (mesinSample.dataEmisiMwH <= 0 || normMesin.dataEmisiMwH <= 0){
 		return 0;
 	}else {
 		float kalkuEM;
-		kalkuEM = mesinSample.dataEmisiMwH / normMesin.dataEmisiMwH;
+		kalkuEM = 1 - (mesinSample.dataEmisiMwH / normMesin.dataEmisiMwH);
 		return kalkuEM;
 	}
 }
@@ -227,7 +265,7 @@ void welcome()
     printf("\t\t\t\t\t\t\t\t\t\tLoading... \n\n");
     Beep(659, 400);
     Sleep(1000); // menjeda program selama 1 detik
-    for (i = 1; i <= 172; i++)
+    for (i = 1; i <= 190; i++)
     {
         printf("%c", 223); // 233 adalah kode KARAKTER beta di dalam ASCII2
         if (i == 60 || i == 100)
@@ -237,4 +275,3 @@ void welcome()
     Sleep(1600);   // menjeda program selama 1.6 detik
     system("CLS"); // Membersihkan layar
 }
-
