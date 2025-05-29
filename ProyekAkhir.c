@@ -63,95 +63,134 @@ int main(){
     
     printf("\t\t\t\t\t\t\t\tTotal mesin yang ingin disimulasikan :");
     scanf("%d", &totalMesin);
-    
+
+    int i = 0, j = 0, k = 0, z = 0;
+    KlasifikasiMesin *mesin = malloc(totalMesin * sizeof(KlasifikasiMesin));
+    char lanjutInput;
+
     //input data tahun, listrik (kwh), emisi (mwh), produksi (item/jam), harga mesin(rupiah). bikin loop nah cari nilai terbesar setiap kategori, jadiin untuk variabel normalisasi
     KlasifikasiMesin nMesin = {0};
     KlasifikasiMesin nMesinProduksi = {0};
-    KlasifikasiMesin *mesin = malloc(totalMesin * sizeof(KlasifikasiMesin));
+    do
+    {
+        //deklarasi arrray 
+        float *semuaEfisiensi = malloc((totalMesin+1) * sizeof(float));
+        float *scoreAkhir = malloc(totalMesin * sizeof(float));
 
-    //bikinin error handling per input
-    for (int i = 0; i < totalMesin; i++){
-        printf("\n\t\t\t\t\t\t\t\tData Mesin ke-%d ", i+1);
-        printf("\n\t\t\t\t\t\t\t\tNama Mesin ke-%d: ", i+1);
-        getchar();//membersihkan newline sisa input sebelumnya
-        scanf(" %[^\n]", mesin[i].dataNama);
+        //bikinin error handling per input
+        for ( ; i < totalMesin; i++){
+            printf("\n\t\t\t\t\t\t\t\tData Mesin ke-%d ", i+1);
+            printf("\n\t\t\t\t\t\t\t\tNama Mesin ke-%d: ", i+1);
+            getchar();//membersihkan newline sisa input sebelumnya
+            scanf(" %[^\n]", mesin[i].dataNama);
 
-        //contoh error handling
-        int inpStatus;
-        do
-        {
-            printf("\t\t\t\t\t\t\t\tBesar listrik yang digunakan (KwH): ");
-            inpStatus = scanf("%f", &mesin[i].dataListrikKwH);
-            if (inpStatus != 1){
-                /* bikinin printf input gavalid */
-                while (getchar() != '\n');}
-            
-        } while (inpStatus != 1);
-        
-        //cari data normanisasi
-        nMesin.dataListrikKwH = (mesin[i].dataListrikKwH > nMesin.dataListrikKwH) ? mesin[i].dataListrikKwH : nMesin.dataListrikKwH;
-        nMesinProduksi.dataListrikKwH = (mesin[i].dataListrikKwH < nMesinProduksi.dataListrikKwH) ? mesin[i].dataListrikKwH : nMesinProduksi.dataListrikKwH;
+            //contoh error handling
+            int inpStatus;
+            do
+            {
+                printf("\t\t\t\t\t\t\t\tBesar listrik yang digunakan (KwH): ");
+                inpStatus = scanf("%f", &mesin[i].dataListrikKwH);
+                if (inpStatus != 1){
+                    /* bikinin printf input gavalid */
+                    while (getchar() != '\n');}
+                
+            } while (inpStatus != 1);
 
-        printf("\t\t\t\t\t\t\t\tTotal emisi karbon per jam (MwH): ");
-        scanf("%f", &mesin[i].dataEmisiMwH);
-        //cari data normanisasi
-        nMesin.dataEmisiMwH = (mesin[i].dataEmisiMwH > nMesin.dataEmisiMwH) ? mesin[i].dataEmisiMwH : nMesin.dataEmisiMwH;
-        nMesinProduksi.dataEmisiMwH = (mesin[i].dataEmisiMwH < nMesinProduksi.dataEmisiMwH) ? mesin[i].dataEmisiMwH : nMesinProduksi.dataEmisiMwH;
+            //cari data normanisasi
+            nMesin.dataListrikKwH = (mesin[i].dataListrikKwH > nMesin.dataListrikKwH) ? mesin[i].dataListrikKwH : nMesin.dataListrikKwH;
+            nMesinProduksi.dataListrikKwH = (mesin[i].dataListrikKwH < nMesinProduksi.dataListrikKwH) ? mesin[i].dataListrikKwH : nMesinProduksi.dataListrikKwH;
 
-        printf("\t\t\t\t\t\t\t\tTotal mesin memproduksi per jam (Kg): ");
-        scanf("%f", &mesin[i].dataProduksi); 
-        //cari data normanisasi
-        nMesin.dataProduksi = (mesin[i].dataProduksi > nMesin.dataProduksi) ? mesin[i].dataProduksi : nMesin.dataProduksi;
-        nMesinProduksi.dataProduksi = (mesin[i].dataProduksi > nMesinProduksi.dataProduksi) ? mesin[i].dataProduksi : nMesinProduksi.dataProduksi;
+            printf("\t\t\t\t\t\t\t\tTotal emisi karbon per jam (MwH): ");
+            scanf("%f", &mesin[i].dataEmisiMwH);
+            //cari data normanisasi
+            nMesin.dataEmisiMwH = (mesin[i].dataEmisiMwH > nMesin.dataEmisiMwH) ? mesin[i].dataEmisiMwH : nMesin.dataEmisiMwH;
+            nMesinProduksi.dataEmisiMwH = (mesin[i].dataEmisiMwH < nMesinProduksi.dataEmisiMwH) ? mesin[i].dataEmisiMwH : nMesinProduksi.dataEmisiMwH;
 
-        printf("\t\t\t\t\t\t\t\tHarga mesin (Juta): ");
-        scanf("%f", &mesin[i].dataHargaMesin);
-        nMesin.dataHargaMesin = (mesin[i].dataHargaMesin > nMesin.dataHargaMesin) ? mesin[i].dataHargaMesin: nMesin.dataHargaMesin;
-        nMesinProduksi.dataHargaMesin = (mesin[i].dataHargaMesin < nMesinProduksi.dataHargaMesin) ? mesin[i].dataHargaMesin : nMesinProduksi.dataHargaMesin;
+            printf("\t\t\t\t\t\t\t\tTotal mesin memproduksi per jam (Kg): ");
+            scanf("%f", &mesin[i].dataProduksi); 
+            //cari data normanisasi
+            nMesin.dataProduksi = (mesin[i].dataProduksi > nMesin.dataProduksi) ? mesin[i].dataProduksi : nMesin.dataProduksi;
+            nMesinProduksi.dataProduksi = (mesin[i].dataProduksi > nMesinProduksi.dataProduksi) ? mesin[i].dataProduksi : nMesinProduksi.dataProduksi;
 
-        printf("\n");
-        
-    }
+            printf("\t\t\t\t\t\t\t\tHarga mesin (Juta): ");
+            scanf("%f", &mesin[i].dataHargaMesin);
+            nMesin.dataHargaMesin = (mesin[i].dataHargaMesin > nMesin.dataHargaMesin) ? mesin[i].dataHargaMesin: nMesin.dataHargaMesin;
+            nMesinProduksi.dataHargaMesin = (mesin[i].dataHargaMesin < nMesinProduksi.dataHargaMesin) ? mesin[i].dataHargaMesin : nMesinProduksi.dataHargaMesin;
 
-    //berapa tahun mesin perlu dipake
-    int tahun;
-    printf("\t\t\t\t\t\t\t\tTarget tahun mesin digunakan: ");
-    scanf("%d", &tahun);
+            printf("\n");
 
-    //cari efesiensi mesin maksimum
-    float efisiensiMaks = 0;
-    float semuaEfisiensi[totalMesin + 1];
-
-    for (int i = 0; i <= totalMesin; i++) {
-        if (i == totalMesin){
-            semuaEfisiensi[i] = KalkulasiKeuntunganProduksi(nMesinProduksi, nMesin, tahun);}
-        else{semuaEfisiensi[i] = KalkulasiKeuntunganProduksi(mesin[i], nMesin, tahun);}
-        if (semuaEfisiensi[i] > efisiensiMaks) {
-            efisiensiMaks = semuaEfisiensi[i];
         }
-    }
 
-    //kalkulasi score dan simulasi tiap mesin
-    float scoreAkhir[totalMesin];
-    for (int i = 0; i < totalMesin ; i++){
-        //panggil fungsi hemat energi 
-        float scoreHE = 30 * KalkulasiHematEnergi(mesin[i], nMesin);
-        //panggil fungsi emisi karbon
-        float scoreEM = 25 * KalkulasiEmisiKarbon(mesin[i], nMesin);
-        //panggil fungsi keuntungan
-        float scoreKU = 45 * (semuaEfisiensi[i] / efisiensiMaks);
-        //score akhir efektivitas 
-        scoreAkhir[i] = scoreEM + scoreHE + scoreKU;
-    }
+        //berapa tahun mesin perlu dipake
+        int tahun;
+        printf("\t\t\t\t\t\t\t\tTarget tahun mesin digunakan: ");
+        scanf("%d", &tahun);
+
+        //cari efesiensi mesin maksimum
+        float efisiensiMaks = 0;
+
+        for (j=0 ; j <= totalMesin; j++) {
+            if (j == totalMesin){
+                semuaEfisiensi[j] = KalkulasiKeuntunganProduksi(nMesinProduksi, nMesin, tahun);}
+            else{semuaEfisiensi[j] = KalkulasiKeuntunganProduksi(mesin[j], nMesin, tahun);}
+            if (semuaEfisiensi[j] > efisiensiMaks) {
+                efisiensiMaks = semuaEfisiensi[j];
+            }
+        }
+
+        //kalkulasi score dan simulasi tiap mesin
+        for (k = 0 ; k < totalMesin ; k++){
+            //panggil fungsi hemat energi 
+            float scoreHE = 30 * KalkulasiHematEnergi(mesin[k], nMesin);
+            //panggil fungsi emisi karbon
+            float scoreEM = 25 * KalkulasiEmisiKarbon(mesin[k], nMesin);
+            //panggil fungsi keuntungan
+            float scoreKU = 45 * (1 - semuaEfisiensi[k] / efisiensiMaks);
+            //score akhir efektivitas 
+            scoreAkhir[k] = scoreEM + scoreHE + scoreKU;
+        }
+
+        //urutin mesin yang paling efektif
+	    SortMesinTerbaik(scoreAkhir, mesin, totalMesin);
+
+        //print out urutan
+        system("CLS"); // Membersihkan layar
+        printDataMesin(mesin, scoreAkhir, totalMesin);
+
+        // apakah tambah mesin lagi
+        printf("\nTambah mesin lagi? (y/n) : ");
+        scanf(" %c", &lanjutInput);  // Spasi sebelum %c untuk skip newline
+
+        // apakah nambah mesin
+       if (lanjutInput == 'Y' || lanjutInput == 'y') {
+            int tambahan;
+            printf("Tambah berapa mesin yang ingin disimulasikan : ");
+            scanf("%d", &tambahan);
+
+            // Alokasi memori sementara
+            KlasifikasiMesin *temp = realloc(mesin, (totalMesin + tambahan) * sizeof(KlasifikasiMesin));
+            free(scoreAkhir);
+            free(semuaEfisiensi);
+
+            if (temp == NULL) {
+                printf("❌ Gagal menambah memori! Program dihentikan.\n");
+                exit(1);
+            }
+        
+            // Jika berhasil, update pointer utama
+            mesin = temp;
+        
+            system("CLS"); // Membersihkan layar
+            printf("\t\t\t\t\t\t\t\t================== Mulai Simulasi ===================\n");
+            totalMesin += tambahan; // update jumlah total mesin
+        }
+
+
+    } while (lanjutInput == 'Y' || lanjutInput == 'y'); 
     
-    //urutin mesin yang paling efektif
-	SortMesinTerbaik(scoreAkhir, mesin, totalMesin);
-    
-    //print out urutan
-    system("CLS"); // Membersihkan layar
-    printDataMesin(mesin, scoreAkhir, totalMesin);
     //end
     free(mesin);
+
     return 0;
 }
 
