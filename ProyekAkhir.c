@@ -19,21 +19,17 @@ typedef enum {
 } StatusMesin;
 
 //function kalkulasi utama
-float KalkulasiHematEnergi(KlasifikasiMesin mesinSample, KlasifikasiMesin normMesin); //ini output nilainya aja
+float KalkulasiHematEnergi(KlasifikasiMesin mesinSample, KlasifikasiMesin normMesin); 
 float KalkulasiEmisiKarbon(KlasifikasiMesin mesinSample, KlasifikasiMesin normMesin); 
+//untuk mengitung score keuntungan produksi dari mesin yang digunakan, dibuat khalisa
 float KalkulasiKeuntunganProduksi(KlasifikasiMesin mesinSample, KlasifikasiMesin normMesin, int tahun);
-//ini cari banyak produksi per rupiah, produksi dari laju kali total jam
-
-//function tambahan
+//untuk mengitung berapa kali mesin harus diganti dalam periode tahun yang ditentukan, dibuat khalisa
 int GantiMesinPerTahun(float ovrHeating, int tahun);
-//call by reference
 void SwapObjek(KlasifikasiMesin* a, KlasifikasiMesin* b);
 void Swap(float* a, float* b);
 void SortMesinTerbaik(float score[], KlasifikasiMesin objek[], int totalMesin);
 void FrekuensiGantiMesin (KlasifikasiMesin* mesin, int totalMesin, KlasifikasiMesin normMesin);
 void hitungBEP(KlasifikasiMesin mesin);
-
-//Fungsi User Interface input
 void welcome();
 void printDataMesin(KlasifikasiMesin *mesin, float score[], int totalMesin);
 
@@ -75,7 +71,7 @@ int main(){
                 printf("\t\t\t\t\t\t\t\tBesar listrik yang digunakan (KwH): ");
                 inpStatus = scanf("%f", &mesin[i].dataListrikKwH);
                 if (inpStatus != 1){
-                    /* bikinin printf input gavalid */
+                    printf("\t\t\t\t\t\t\t\tInput tidak valid!\n");
                     while (getchar() != '\n');}
                 
             } while (inpStatus != 1);
@@ -84,20 +80,43 @@ int main(){
             nMesin.dataListrikKwH = (mesin[i].dataListrikKwH > nMesin.dataListrikKwH) ? mesin[i].dataListrikKwH : nMesin.dataListrikKwH;
             nMesinProduksi.dataListrikKwH = (mesin[i].dataListrikKwH < nMesinProduksi.dataListrikKwH) ? mesin[i].dataListrikKwH : nMesinProduksi.dataListrikKwH;
 
-            printf("\t\t\t\t\t\t\t\tTotal emisi karbon per jam (MwH): ");
-            scanf("%f", &mesin[i].dataEmisiMwH);
+            do
+            {
+                printf("\t\t\t\t\t\t\t\tTotal emisi karbon per jam (MwH): ");
+                inpStatus = scanf("%f", &mesin[i].dataEmisiMwH);
+                if (inpStatus != 1){
+                    printf("\t\t\t\t\t\t\t\tInput tidak valid!\n");
+                    while (getchar() != '\n');}
+                
+            } while (inpStatus != 1);
+
             //cari data normanisasi
             nMesin.dataEmisiMwH = (mesin[i].dataEmisiMwH > nMesin.dataEmisiMwH) ? mesin[i].dataEmisiMwH : nMesin.dataEmisiMwH;
             nMesinProduksi.dataEmisiMwH = (mesin[i].dataEmisiMwH < nMesinProduksi.dataEmisiMwH) ? mesin[i].dataEmisiMwH : nMesinProduksi.dataEmisiMwH;
 
-            printf("\t\t\t\t\t\t\t\tTotal mesin memproduksi per jam (Kg): ");
-            scanf("%f", &mesin[i].dataProduksi); 
+            do
+            {
+                printf("\t\t\t\t\t\t\t\tTotal mesin memproduksi per jam (Kg): ");
+                inpStatus = scanf("%f", &mesin[i].dataProduksi); 
+                if (inpStatus != 1){
+                    printf("\t\t\t\t\t\t\t\tInput tidak valid!\n");
+                    while (getchar() != '\n');}
+                
+            } while (inpStatus != 1);
+
             //cari data normanisasi
             nMesin.dataProduksi = (mesin[i].dataProduksi > nMesin.dataProduksi) ? mesin[i].dataProduksi : nMesin.dataProduksi;
             nMesinProduksi.dataProduksi = (mesin[i].dataProduksi > nMesinProduksi.dataProduksi) ? mesin[i].dataProduksi : nMesinProduksi.dataProduksi;
 
-            printf("\t\t\t\t\t\t\t\tHarga mesin (Juta): ");
-            scanf("%f", &mesin[i].dataHargaMesin);
+            do
+            {
+                printf("\t\t\t\t\t\t\t\tHarga mesin (Juta): ");
+                inpStatus = scanf("%f", &mesin[i].dataHargaMesin);
+                if (inpStatus != 1){
+                    printf("\t\t\t\t\t\t\t\tInput tidak valid!\n");
+                    while (getchar() != '\n');}
+                
+            } while (inpStatus != 1);
             nMesin.dataHargaMesin = (mesin[i].dataHargaMesin > nMesin.dataHargaMesin) ? mesin[i].dataHargaMesin: nMesin.dataHargaMesin;
             nMesinProduksi.dataHargaMesin = (mesin[i].dataHargaMesin < nMesinProduksi.dataHargaMesin) ? mesin[i].dataHargaMesin : nMesinProduksi.dataHargaMesin;
 
@@ -142,8 +161,11 @@ int main(){
         printDataMesin(mesin, scoreAkhir, totalMesin);
 
         // apakah tambah mesin lagi
-        printf("\nTambah mesin lagi? (y/n) : ");
-        scanf(" %c", &lanjutInput);  // Spasi sebelum %c untuk skip newline
+        do
+        {
+            printf("\nTambah mesin lagi? (y/n) : ");
+            scanf(" %c", &lanjutInput);  // Spasi sebelum %c untuk skip newline
+        } while (lanjutInput != 'y' && lanjutInput != 'Y' && lanjutInput != 'n' && lanjutInput != 'N');
 
         // apakah nambah mesin
        if (lanjutInput == 'Y' || lanjutInput == 'y') {
@@ -157,7 +179,7 @@ int main(){
             free(semuaEfisiensi);
 
             if (temp == NULL) {
-                printf("❌ Gagal menambah memori! Program dihentikan.\n");
+                printf("Gagal menambah memori! Program dihentikan.\n");
                 exit(1);
             }
         
