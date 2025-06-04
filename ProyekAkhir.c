@@ -196,38 +196,47 @@ int main(){
 
     // menawarkan fitur tambahan pada user
     int fiturTambahan;
-    printf("\nApakah Anda ingin menggunakan fitur tambahan?\n");
-    printf("0 = Tidak\n1 = Ganti Mesin\n2 = Break Even Point (BEP)\n3 = Keduanya\nPilihan Anda: ");
-    scanf("%d", &fiturTambahan);
-    
-    // Jalankan fitur sesuai pilihan user
-    switch (fiturTambahan) {
-        case 0:
-            printf("Tidak menggunakan fitur tambahan.\n");
-            break;
-        case 1:
-            // Panggil fungsi frekuensi ganti mesin
-            FrekuensiGantiMesin(mesin, totalMesin, nMesin);
-            break;
-        case 2:
-            // Panggil fungsi BEP untuk tiap mesin
-            for (int i = 0; i < totalMesin; i++) {
-                printf("\nMesin: %s\n", mesin[i].dataNama);
-                hitungBEP(mesin[i]);
-            }
-            break;
-        case 3:
-            // Jalankan kedua fitur
-            FrekuensiGantiMesin(mesin, totalMesin, nMesin);
-            for (int i = 0; i < totalMesin; i++) {
-                printf("\nMesin: %s\n", mesin[i].dataNama);
-                hitungBEP(mesin[i]);
-            }
-            break;
-        default:
-            printf("Pilihan tidak valid.\n");
-            break;
-    }
+    int exit = 1;
+
+    do
+    {
+        system("CLS"); // Membersihkan layar
+        printf("\nApakah Anda ingin menggunakan fitur tambahan?\n");
+        printf("0 = Tidak\n1 = Ganti Mesin\n2 = Break Even Point (BEP)\n3 = Keduanya\nPilihan Anda: ");
+        scanf("%d", &fiturTambahan);
+        
+        // Jalankan fitur sesuai pilihan user
+        switch (fiturTambahan) {
+            case 0:
+                printf("Tidak menggunakan fitur tambahan.\n");
+                exit = 0;
+                break;
+
+            case 1:
+                // Panggil fungsi frekuensi ganti mesin
+                FrekuensiGantiMesin(mesin, totalMesin, nMesin);
+                break;
+            case 2:
+                // Panggil fungsi BEP untuk tiap mesin
+                for (int i = 0; i < totalMesin; i++) {
+                    printf("\nMesin: %s\n", mesin[i].dataNama);
+                    hitungBEP(mesin[i]);
+                }
+                break;
+            case 3:
+                // Jalankan kedua fitur
+                FrekuensiGantiMesin(mesin, totalMesin, nMesin);
+                for (int i = 0; i < totalMesin; i++) {
+                    printf("\nMesin: %s\n", mesin[i].dataNama);
+                    hitungBEP(mesin[i]);
+                }
+                break;
+            default:
+                printf("Pilihan tidak valid.\n");
+                break;
+        }
+
+    } while (exit != 0);
     
     //end
     free(mesin);
@@ -246,6 +255,8 @@ int GantiMesinPerTahun(float ovrHeating, int tahun){
         for (int j = 0; j < HariPerTahun ; j++){
             statusPoin += ovhValue * JamKerjaPerHari; //jadi status poin nambah sesuai kecepatan overheating
             statusPoin -= (1 - ovhValue) * (24 - JamKerjaPerHari); // pendinginan saat jam istirahat
+            //batasi statusPoin minimal 0
+            if (statusPoin < 0) {statusPoin = 0;}
             //saat mencapai FATAL, mesin diganti
             if (statusPoin >= FATAL){
                 statusPoin = 0; //restart 
