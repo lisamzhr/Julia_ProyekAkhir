@@ -32,8 +32,9 @@ typedef union {
 //struct ramah lingkungan
 typedef struct {
     EfisiensiEnergi efisiensi;
-    int ramahLingkungan;  
+    int ramahLingkungan;  // 1 kalau ya, 0 kalau tidak
 } EvaluasiLingkungan;
+
 
 //function kalkulasi utama
 //untuk menghitung score hemat energi berdasarkan listrik dari setiap mesin, dibuat oleh putri ayu
@@ -48,13 +49,13 @@ float KalkulasiKeuntunganProduksi(KlasifikasiMesin mesinSample, KlasifikasiMesin
 //untuk mengitung berapa kali mesin harus diganti dalam periode tahun yang ditentukan, dibuat khalisa
 int GantiMesinPerTahun(float ovrHeating, int tahun);
 
-// untuk memastikan bahwa urutan skor tetap sinkron dengan urutan data mesin ketika diurutkan. dibuat ariq
+// untuk memastikan bahwa urutan skor tetap sinkron dengan urutan data mesin ketika diurutkan., dibuat ariq
 void SwapObjek(KlasifikasiMesin* a, KlasifikasiMesin* b);
 
-//  untuk membantu mengurutkan array skor tanpa kehilangan keterkaitan urutan dengan data mesinnya. dibuat ariq
+//  untuk membantu mengurutkan array skor tanpa kehilangan keterkaitan urutan dengan data mesinnya., dibuat ariq
 void Swap(float* a, float* b);
 
-// untuk mengurutkan mesin berdasarkan skor efektivitas. semakin tinggi skor, semakin baik posisi mesin. dibuat ariq
+// untuk mengurutkan mesin berdasarkan skor efektivitas. semakin tinggi skor, semakin baik posisi mesin.
 void SortMesinTerbaik(float score[], KlasifikasiMesin objek[], int totalMesin);
 
 //untuk menghitung berapa kali ganti mesin dalam x tahun di mana x ditentukan oleh user, dibuat putay
@@ -63,7 +64,7 @@ void FrekuensiGantiMesin (KlasifikasiMesin* mesin, int totalMesin, KlasifikasiMe
 //untuk menghitung berapa lama untuk mendapatkan keuntungan, dibuat putay
 void hitungBEP(KlasifikasiMesin mesin);
 
-// untuk untuk tes dampak kondisi lingkungan ekstrem. suhu tinggi/rendah, kelembaban tinggi, dan tekanan rendah. dibuat ariq
+// untuk untuk tes dampak kondisi lingkungan ekstrem. suhu tinggi/rendah, kelembaban tinggi, dan tekanan rendah.
 void SimulasiLingkunganEkstrem(KlasifikasiMesin* mesin, int totalMesin);
 
 //untuk mengevaluasi apakah mesin tersebut ramah lingkungan atau tidak, dibuat lisa 
@@ -108,7 +109,8 @@ int main(){
 
             //contoh error handling
             int inpStatus;
-            do{
+            do
+            {
                 printf("\t\t\t\t\t\t\t\tBesar listrik yang digunakan (KwH): ");
                 inpStatus = scanf("%f", &mesin[i].dataListrikKwH);
                 if (inpStatus != 1){
@@ -121,7 +123,8 @@ int main(){
             nMesin.dataListrikKwH = (mesin[i].dataListrikKwH > nMesin.dataListrikKwH) ? mesin[i].dataListrikKwH : nMesin.dataListrikKwH;
             nMesinProduksi.dataListrikKwH = (mesin[i].dataListrikKwH < nMesinProduksi.dataListrikKwH) ? mesin[i].dataListrikKwH : nMesinProduksi.dataListrikKwH;
 
-            do{
+            do
+            {
                 printf("\t\t\t\t\t\t\t\tTotal emisi karbon per jam (MwH): ");
                 inpStatus = scanf("%f", &mesin[i].dataEmisiMwH);
                 if (inpStatus != 1){
@@ -134,7 +137,8 @@ int main(){
             nMesin.dataEmisiMwH = (mesin[i].dataEmisiMwH > nMesin.dataEmisiMwH) ? mesin[i].dataEmisiMwH : nMesin.dataEmisiMwH;
             nMesinProduksi.dataEmisiMwH = (mesin[i].dataEmisiMwH < nMesinProduksi.dataEmisiMwH) ? mesin[i].dataEmisiMwH : nMesinProduksi.dataEmisiMwH;
 
-            do{
+            do
+            {
                 printf("\t\t\t\t\t\t\t\tTotal mesin memproduksi per jam (Kg): ");
                 inpStatus = scanf("%f", &mesin[i].dataProduksi); 
                 if (inpStatus != 1){
@@ -147,7 +151,8 @@ int main(){
             nMesin.dataProduksi = (mesin[i].dataProduksi > nMesin.dataProduksi) ? mesin[i].dataProduksi : nMesin.dataProduksi;
             nMesinProduksi.dataProduksi = (mesin[i].dataProduksi > nMesinProduksi.dataProduksi) ? mesin[i].dataProduksi : nMesinProduksi.dataProduksi;
 
-            do{
+            do
+            {
                 printf("\t\t\t\t\t\t\t\tHarga mesin (Juta): ");
                 inpStatus = scanf("%f", &mesin[i].dataHargaMesin);
                 if (inpStatus != 1){
@@ -159,6 +164,7 @@ int main(){
             nMesinProduksi.dataHargaMesin = (mesin[i].dataHargaMesin < nMesinProduksi.dataHargaMesin) ? mesin[i].dataHargaMesin : nMesinProduksi.dataHargaMesin;
 
             printf("\n");
+
         }
 
         //berapa tahun mesin perlu dipake
@@ -280,9 +286,11 @@ int main(){
     
     //end
     free(mesin);
+
     return 0;
 }
 
+//isi function
 int GantiMesinPerTahun(float ovrHeating, int tahun){
     float ovhValue = ovrHeating;
     int gantiMesin = 0;
@@ -529,7 +537,8 @@ void hitungBEP(KlasifikasiMesin mesin) {
     printf("======================================\n\n");
 }
 
-void welcome(){
+void welcome()
+{
     int i; // deklarasi variabel integer
     printf("!--- Harap Fullscreen lalu tekan ENTER untuk memulai aplikasi ---!");
     getchar();     // memanggil function getchar
